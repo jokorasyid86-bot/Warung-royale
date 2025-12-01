@@ -1,0 +1,390 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Warung Raja Royale</title>
+  <meta name="description" content="Warung Raja Royale - Makanan dan Minuman Rumah" />
+  <style>
+    /* ===== Reset & Base ===== */
+    :root{
+      --accent:#e2e9e5;
+      --accent-dark:#ebefed;
+      --muted:#0e0d0d;
+      --card:#ffffff;
+      --bg:#1075b8;
+      --glass: rgba(15, 13, 13, 0.7);
+      font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      background:linear-gradient(180deg,#f5f6f5, #24cb78);
+      color:#110e0e;
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+      line-height:1.4;
+    }
+    a{color:inherit;text-decoration:none}
+    img{max-width:100%;display:block}
+
+    /* ===== Container ===== */
+    .container{max-width:1100px;margin:24px auto;padding:16px}
+
+    /* ===== Header / Hero ===== */
+    .hero{
+      display:grid;
+      grid-template-columns:1fr;
+      gap:16px;
+      align-items:center;
+      margin-bottom:18px;
+    }
+    .hero-card{
+      position:relative;
+      overflow:hidden;
+      border-radius:12px;
+      box-shadow:0 6px 20px rgba(187, 173, 20, 0.08);
+    }
+    .hero-img{
+      width:100%;
+      height:300px;
+      object-fit:cover;
+      filter:contrast(1) saturate(1);
+      display:block;
+    }
+    .hero-overlay{
+      position:absolute;
+      inset:0;
+      background: linear-gradient(180deg, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0.35) 70%);
+      display:flex;
+      flex-direction:column;
+      justify-content:flex-end;
+      padding:18px;
+      color:rgb(2, 2, 2);
+    }
+    .brand{
+      display:flex;align-items:center;gap:12px;
+    }
+    .brand h1{margin:0;font-size:1.6rem;letter-spacing:0.6px}
+    .hero-desc{margin:8px 0 16px;color:rgba(255,255,255,0.9)}
+    .btn{
+      display:inline-block;background:var(--accent);color:rgb(12, 9, 9);padding:10px 14px;border-radius:10px;font-weight:600;
+      box-shadow:0 6px 18px rgba(46, 64, 84, 0.12);
+      transition:transform .12s ease, box-shadow .12s ease;
+    }
+    .btn:active{transform:translateY(1px)}
+    .btn.secondary{background:transparent;color:white;border:1px solid rgba(255,255,255,0.14)}
+
+    /* ===== Sections ===== */
+    section{background:transparent;margin:18px 0}
+    h2.section-title{font-size:1.15rem;margin:0 0 12px;color:#060606}
+
+    /* ===== Menu Grid ===== */
+    .menu-grid{
+      display:grid;
+      grid-template-columns: repeat(3,1fr);
+      gap:12px;
+    }
+    .card{
+      background:var(--card);
+      border-radius:12px;padding:10px;
+      box-shadow:0 4px 14px rgba(15,23,42,0.06);
+      text-align:center;
+      cursor:pointer;
+      transition:transform .12s ease, box-shadow .12s ease;
+    }
+    .card:hover{transform:translateY(-6px);box-shadow:0 12px 30px rgba(15,23,42,0.08)}
+    .card img{height:140px;object-fit:cover;border-radius:8px;margin-bottom:8px}
+    .card h3{margin:6px 0 2px;font-size:1rem}
+    .price{color:var(--muted);font-weight:600}
+
+    /* ===== Map + Info ===== */
+    .two-cols{
+      display:grid;
+      grid-template-columns:1fr 380px;
+      gap:14px;
+    }
+    .map-embed{
+      border-radius:10px;overflow:hidden;height:320px;background:#fdf2f2;
+    }
+    .info-card{padding:12px;background:var(--card);border-radius:10px;box-shadow:0 6px 18px rgba(226, 227, 229, 0.04)}
+    .info-card p{margin:8px 0;color:var(--muted)}
+
+    /* ===== Footer ===== */
+    footer{margin-top:20px;text-align:center;color:var(--muted);font-size:0.95rem}
+
+    /* ===== Modal ===== */
+    .modal-backdrop{
+      position:fixed;inset:0;background:rgba(2,6,23,0.55);display:flex;align-items:center;justify-content:center;padding:20px;z-index:60;
+      opacity:0;pointer-events:none;transition:opacity .18s ease;
+    }
+    .modal-backdrop.show{opacity:1;pointer-events:auto}
+    .modal{
+      width:100%;max-width:760px;background:var(--card);border-radius:12px;padding:14px;box-shadow:0 18px 60px rgba(2,6,23,0.4);display:grid;grid-template-columns: 1fr 1fr;gap:12px;
+    }
+    .modal-left img{height:100%;width:100%;object-fit:cover;border-radius:10px}
+    .modal-right{display:flex;flex-direction:column;gap:12px}
+    .qty{display:flex;gap:6px;align-items:center}
+    .qty button{padding:8px 10px;border-radius:8px;border:1px solid #ffffff;background:#39a562;cursor:pointer}
+    .order-actions{display:flex;gap:8px;margin-top:auto}
+    .order-actions .btn{flex:1;text-align:center}
+
+    /* ===== Responsive ===== */
+    @media(max-width:900px){
+      .menu-grid{grid-template-columns:repeat(2,1fr)}
+      .two-cols{grid-template-columns:1fr}
+      .modal{grid-template-columns:1fr}
+    }
+    @media(max-width:520px){
+      .menu-grid{grid-template-columns:1fr}
+      .hero-img{height:220px}
+    }
+
+    /* small helper */
+    .muted{color:var(--muted);font-size:0.95rem}
+    .tag{display:inline-block;padding:6px 8px;border-radius:999px;background:#ffffff;color:var(--accent-dark);font-weight:600;font-size:0.85rem}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- HERO -->
+    <div class="hero">
+        <h1 class="title-utama">Warung Raja Royale</h1>
+      <div class="hero-card" id="heroCard">
+        <!-- Ubah src ke lokasi gambar hero Anda (contoh: images/warung.jpg) -->
+        <img class="hero-img" id="heroImage" src="royale.jpg" alt="Warung Raja Royale">
+        <div class="hero-overlay">
+          <div class="brand">
+          </div>
+
+          <div style="margin-top:12px;display:flex;gap:8px">
+            <a class="btn" href="#menu">Lihat Menu</a>
+            <a class="btn secondary" id="waQuick" href="#" target="_blank">Pesan via WhatsApp</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MENU MAKANAN -->
+    <section id="menu">
+      <h2 class="section-title">Menu Unggulan</h2>
+      <p class="muted">Klik gambar untuk melihat detail & memesan</p>
+
+      <h3 style="margin:12px 0 8px">Makanan</h3>
+      <div class="menu-grid" id="foodGrid">
+        <!-- Kartu makanan akan di-populate oleh JS -->
+      </div>
+
+      <h3 style="margin:18px 0 8px">Minuman</h3>
+      <div class="menu-grid" id="drinkGrid">
+        <!-- Kartu minuman akan di-populate oleh JS -->
+      </div>
+    </section>
+
+    <!-- MAP & INFO -->
+    <section>
+      <h2 class="section-title">Lokasi</h2>
+      <div class="two-cols">
+        <div class="map-embed" title="Peta Lokasi">
+          <!-- Embed sederhana: memakai query ke Google Maps (bisa ganti jika ada embed link resmi) -->
+          <iframe
+            src="https://www.google.com/maps?q=JH93+WH8+Warung+Makan+Royale,+Popalia,+Tanggetada,+Kabupaten+Kolaka,+Sulawesi+Tenggara&output=embed"
+            width="100%" height="100%" frameborder="0" style="border:0" allowfullscreen="" loading="lazy"></iframe>
+        </div>
+
+        <div class="info-card">
+          <h3>Warung Makan Royale</h3>
+          <p class="muted">Alamat terdekat: <strong>JH93+WH8 Warung Makan Royale, Popalia, Tanggetada, Kabupaten Kolaka, Sulawesi Tenggara 93563</strong></p>
+          <p><span class="tag">Buka: 08.00 - 21.00</span></p>
+          <p class="muted">Nomor WhatsApp (pesan & antar): <strong id="waNumberDisplay">+62 82273446812</strong></p>
+          <p>Tekan tombol 'Lihat di Maps' untuk membuka di aplikasi Maps / Google Maps.</p>
+          <div style="margin-top:12px;display:flex;gap:8px">
+            <a class="btn" href="https://maps.app.goo.gl/F5Hvp8cgcqKdYAU99?g_st=ipc" target="_blank">Lihat di Maps</a>
+            <a class="btn secondary" id="callBtn" href="tel:+82273446812">Hubungi</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <footer>
+      <div style="margin-bottom:8px">© <strong>Warung Raja Royale</strong> — Semua hak dilindungi</div>
+      <div class="muted">082273446812.</div>
+    </footer>
+  </div>
+
+  <!-- MODAL -->
+  <div class="modal-backdrop" id="modalBackdrop" aria-hidden="true" role="dialog">
+    <div class="modal" role="document" aria-labelledby="modalTitle">
+      <div class="modal-left">
+        <img id="modalImg" src="" alt="Foto menu">
+      </div>
+      <div class="modal-right">
+        <div>
+          <h2 id="modalTitle" style="margin:0;font-size:1.1rem"></h2>
+          <div id="modalPrice" class="muted" style="margin-top:6px"></div>
+        </div>
+
+        <p id="modalDesc" class="muted" style="margin-top:6px"></p>
+
+        <div>
+          <div class="qty">
+            <label style="min-width:70px">Jumlah:</label>
+            <button id="decQty">-</button>
+            <input id="qtyInput" type="number" value="1" min="1" style="width:56px;text-align:center;padding:8px;border-radius:8px;border:1px solid #e6e9ee">
+            <button id="incQty">+</button>
+          </div>
+        </div>
+
+        <div class="order-actions">
+          <button class="btn" id="orderNow">Pesan via WhatsApp</button>
+          <button class="btn secondary" id="closeModal">Tutup</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    /* =========================
+       Data menu (ubah sesuai kebutuhan)
+       Ganti src gambar ke file Anda: contoh "images/bakso.jpg"
+       ========================= */
+    const WA_NUMBER = "+6282273446812"; // Ganti dengan nomor WA Anda (format internasional tanpa tanda + jika memakai wa.me)
+    document.getElementById('waNumberDisplay').textContent = WA_NUMBER;
+
+    const foods = [
+      {
+        id: 'bakso',
+        name: 'Bakso',
+        price: 12000,
+        desc: 'Bakso sapi dengan kuah gurih, disajikan hangat dengan pangsit dan sambal.',
+        img: 'Bakso.jpeg'
+      },
+      {
+        id: 'nasi-goreng',
+        name: 'Nasi Goreng',
+        price: 15000,
+        desc: 'Nasi goreng spesial dengan telur, sayur, dan tambahan ayam atau telur sesuai permintaan.',
+        img: 'Nasigoreng.jpeg'
+      },
+      {
+        id: 'mie-ayam',
+        name: 'Mie Ayam',
+        price: 10000,
+        desc: 'Mie ayam khas Warung Raja Royale, kuah kaldu kental dengan taburan ayam cincang.',
+        img: 'miayam.jpg'
+      }
+    ];
+
+    const drinks = [
+      {
+        id: 'es-teh',
+        name: 'Es Teh',
+        price: 5000,
+        desc: 'Es teh manis segar, cocok untuk melepas dahaga.',
+        img: 'esteh.jpg'
+      },
+      {
+        id: 'es-jeruk',
+        name: 'Es Jeruk',
+        price: 7000,
+        desc: 'Es jeruk segar dari perasan jeruk asli.',
+        img: 'esjeruk.png'
+      },
+      {
+        id: 'air-mineral',
+        name: 'Air Mineral',
+        price: 3000,
+        desc: 'Air mineral dalam gelas/botol, pilihan praktis dan sehat.',
+        img: 'airmineral.jpeg'
+      }
+    ];
+
+    // Quick WA button on hero
+    const waQuick = document.getElementById('waQuick');
+    waQuick.href = `https://wa.me/${WA_NUMBER.replace(/\D/g,'')}?text=${encodeURIComponent('Halo, saya ingin melihat menu & pesan dari Warung Raja Royale')}`;
+
+    // Populate grids
+    function createCard(item){
+      const el = document.createElement('div');
+      el.className = 'card';
+      el.setAttribute('data-id', item.id);
+      el.innerHTML = `
+        <img src="${item.img}" alt="${item.name}">
+        <h3>${item.name}</h3>
+        <div class="price">Rp ${Number(item.price).toLocaleString('id-ID')}</div>
+      `;
+      el.addEventListener('click', ()=> openModal(item));
+      return el;
+    }
+
+    const foodGrid = document.getElementById('foodGrid');
+    foods.forEach(f => foodGrid.appendChild(createCard(f)));
+
+    const drinkGrid = document.getElementById('drinkGrid');
+    drinks.forEach(d => drinkGrid.appendChild(createCard(d)));
+
+    /* ===== Modal logic ===== */
+    const modalBackdrop = document.getElementById('modalBackdrop');
+    const modalImg = document.getElementById('modalImg');
+    const modalTitle = document.getElementById('modalTitle');
+    const modalPrice = document.getElementById('modalPrice');
+    const modalDesc = document.getElementById('modalDesc');
+    const qtyInput = document.getElementById('qtyInput');
+    const incQty = document.getElementById('incQty');
+    const decQty = document.getElementById('decQty');
+    const orderNow = document.getElementById('orderNow');
+    const closeModalBtn = document.getElementById('closeModal');
+
+    let currentItem = null;
+
+    function openModal(item){
+      currentItem = item;
+      modalImg.src = item.img;
+      modalImg.alt = item.name;
+      modalTitle.textContent = item.name;
+      modalPrice.textContent = 'Rp ' + Number(item.price).toLocaleString('id-ID');
+      modalDesc.textContent = item.desc;
+      qtyInput.value = 1;
+      modalBackdrop.classList.add('show');
+      modalBackdrop.setAttribute('aria-hidden','false');
+    }
+
+    function closeModal(){
+      modalBackdrop.classList.remove('show');
+      modalBackdrop.setAttribute('aria-hidden','true');
+    }
+
+    incQty.addEventListener('click', ()=> {
+      qtyInput.value = Number(qtyInput.value) + 1;
+    });
+    decQty.addEventListener('click', ()=> {
+      qtyInput.value = Math.max(1, Number(qtyInput.value) - 1);
+    });
+
+    closeModalBtn.addEventListener('click', closeModal);
+    modalBackdrop.addEventListener('click', (e)=>{
+      if(e.target === modalBackdrop) closeModal();
+    });
+
+    orderNow.addEventListener('click', ()=>{
+      if(!currentItem) return;
+      const qty = Number(qtyInput.value) || 1;
+      const total = currentItem.price * qty;
+      const msg = `Halo, saya ingin memesan *${currentItem.name}* (x${qty}) - Total Rp ${total.toLocaleString('id-ID')}. Mohon konfirmasi ketersediaan dan estimasi waktu. Terima kasih.`;
+      const phone = WA_NUMBER.replace(/\D/g,'');
+      const url = `https://wa.me/${phone}?text=${encodeURIComponent(msg)}`;
+      window.open(url,'_blank');
+    });
+
+    /* ===== Small convenience: change hero image if uploaded file exists in same folder ===== */
+    // If you placed the actual photo with filename in the same folder, update 'images/warung-royale-hero.jpg'
+    // Or simply change <img id="heroImage" src="..."> manually.
+
+    /* ===== Accessibility: close modal on ESC ===== */
+    window.addEventListener('keydown', (e)=>{
+      if(e.key === 'Escape') closeModal();
+    });
+  </script>
+</body>
+</html>
